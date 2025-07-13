@@ -65,6 +65,18 @@ export const navItems: NavItemConfig[] = [
     href: "/products",
     icon: "Project",
   },
+  {
+    key: "order",
+    title: "Order",
+    href: "/orders",
+    icon: "Roles",
+  },
+  {
+    key: "productRate",
+    title: "Product Rate",
+    href: "/products-rates",
+    icon: "Project",
+  },
 ];
 
 export const navItems2: NavItemConfig[] = [

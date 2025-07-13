@@ -19,6 +19,10 @@ import { DecodedToken } from "../utils/getUserPermissions";
 import Cookies from "universal-cookie";
 import ProductList from "./admin/product";
 import ProductForm from "./admin/product/add";
+import OrderList from "./admin/orders";
+import OrderForm from "./admin/orders/Form";
+import ProductRateList from "./admin/productRate";
+import ProductRateForm from "./admin/productRate/Form";
 
 export default function ProtectedRoutes() {
   const [isSuperAdmin, setIsSuperAdmin] = useState<boolean | null>(null);
@@ -84,10 +88,25 @@ export default function ProtectedRoutes() {
           <Route path="/products/add" element={<ProductForm />} />
           <Route path="/products/edit/:id" element={<ProductForm />} />
 
+          <Route
+            path="/products/:productId/rates"
+            element={<ProductRateList />}
+          />
+          <Route
+            path="/products/:productId/rates/add"
+            element={<ProductRateForm />}
+          />
+          <Route
+            path="/products/:productId/rates/edit/:id"
+            element={<ProductRateForm />}
+          />
+
+          <Route path="/orders" element={<OrderList />} />
+          <Route path="/orders/add" element={<OrderForm />} />
+          <Route path="/orders/edit/:id" element={<OrderForm />} />
           <Route path="/category" element={<Category />} />
           <Route path="/category/add" element={<CategoryAddEditForm />} />
           <Route path="/category/edit/:id" element={<CategoryAddEditForm />} />
-
           <Route path="/blog" element={<Blog />} />
           <Route path="/blog/add" element={<BlogAddEditForm />} />
           <Route path="/blog/edit/:id" element={<BlogAddEditForm />} />

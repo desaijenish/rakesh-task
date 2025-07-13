@@ -11,6 +11,8 @@ import { categoryApi } from "./api/category";
 import { blogApi } from "./api/blog";
 import { imagesApi } from "./api/image";
 import { productApi } from "./api/produc";
+import { orderApi } from "./api/order";
+import { productRateApi } from "./api/productRate";
 
 export const store = configureStore({
   reducer: {
@@ -19,15 +21,19 @@ export const store = configureStore({
     [documentApi.reducerPath]: documentApi.reducer,
     [loginApi.reducerPath]: loginApi.reducer,
     [productApi.reducerPath]: productApi.reducer,
+    [orderApi.reducerPath]: orderApi.reducer,
     [categoryApi.reducerPath]: categoryApi.reducer,
     [contentApi.reducerPath]: contentApi.reducer,
     [blogApi.reducerPath]: blogApi.reducer,
     [imagesApi.reducerPath]: imagesApi.reducer,
+    [productRateApi.reducerPath]: productRateApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware()
       .concat(documentApi.middleware)
+      .concat(productRateApi.middleware)
       .concat(loginApi.middleware)
+      .concat(orderApi.middleware)
       .concat(productApi.middleware)
       .concat(contentApi.middleware)
       .concat(categoryApi.middleware)
