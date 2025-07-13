@@ -72,10 +72,6 @@ export function Layout({ children }: LayoutProps): React.JSX.Element {
                   variant="h1"
                 >
                   Welcome to
-                  <Box component="span" sx={{ color: "#15b79e" }}>
-                    {" "}
-                    D2 webtech CRM
-                  </Box>
                 </Typography>
               </Stack>
               <Box sx={{ display: "flex", justifyContent: "center" }}>

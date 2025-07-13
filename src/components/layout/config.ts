@@ -10,8 +10,6 @@ const cookies = new Cookies();
 const token = cookies.get("token");
 const decodedToken: DecodedToken = token ? parseJwt(token) : null;
 
-// const isSuperAdmin: boolean = decodedToken?.type === "company" || false;
-
 const hasModuleAccess = (module: string): boolean => {
   return !!decodedToken?.roles?.some((role) =>
     role.permissions.some(
@@ -53,12 +51,7 @@ export const navItems: NavItemConfig[] = [
     href: "/",
     icon: "Dashboard",
   },
-  {
-    key: "blog",
-    title: "Blog",
-    href: "/blog",
-    icon: "Roles",
-  },
+
   {
     key: "product",
     title: "Product",
