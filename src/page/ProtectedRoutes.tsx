@@ -6,10 +6,7 @@ import {
   useLocation,
   useNavigate,
 } from "react-router-dom";
-import BlogAddEditForm from "./admin/blog/add";
-import Blog from "./admin/blog";
-import CategoryAddEditForm from "./admin/category/add";
-import Category from "./admin/category";
+
 import Register from "./admin/register/page";
 import Login from "./admin/login/page";
 import { ProgressIndicator } from "../components/ProgressIndicator";

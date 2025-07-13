@@ -32,7 +32,7 @@ export function Layout({ children }: LayoutProps): React.JSX.Element {
               to="/"
               sx={{ display: "inline-block", fontSize: 0 }}
             >
-              JENISH
+              task
             </Box>
           </Box>
           <Box
