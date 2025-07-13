@@ -88,16 +88,10 @@ export default function ProtectedRoutes() {
           <Route path="/products/add" element={<ProductForm />} />
           <Route path="/products/edit/:id" element={<ProductForm />} />
 
+          <Route path="/products-rates" element={<ProductRateList />} />
+          <Route path="/products-rates/add" element={<ProductRateForm />} />
           <Route
-            path="/products/:productId/rates"
-            element={<ProductRateList />}
-          />
-          <Route
-            path="/products/:productId/rates/add"
-            element={<ProductRateForm />}
-          />
-          <Route
-            path="/products/:productId/rates/edit/:id"
+            path="/products-rates/edit/:id"
             element={<ProductRateForm />}
           />
 

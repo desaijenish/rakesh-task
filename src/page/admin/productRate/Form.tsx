@@ -14,11 +14,15 @@ import {
   Alert,
   IconButton,
   InputAdornment,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  Autocomplete,
 } from "@mui/material";
 import { ArrowBack } from "@mui/icons-material";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import {
@@ -26,8 +30,10 @@ import {
   useGetProductRatesQuery,
   useUpdateProductRateMutation,
 } from "../../../redux/api/productRate";
+import { useGetProductsQuery } from "../../../redux/api/produc";
 
 const validationSchema = Yup.object({
+  productId: Yup.string().required("Product is required"),
   rate: Yup.number()
     .required("Rate is required")
     .min(0, "Rate must be positive"),
@@ -38,7 +44,7 @@ const validationSchema = Yup.object({
 });
 
 const ProductRateForm: React.FC = () => {
-  const { productId, id } = useParams<{ productId: string; id?: string }>();
+  const { id } = useParams<{ id?: string }>();
   const navigate = useNavigate();
   const [snackbar, setSnackbar] = useState<{
     open: boolean;
@@ -50,22 +56,20 @@ const ProductRateForm: React.FC = () => {
     severity: "success",
   });
 
-  const { data: productRates } = useGetProductRatesQuery({
-    productId: productId!,
-  });
-  const [createRate] = useCreateProductRateMutation();
-  const [updateRate] = useUpdateProductRateMutation();
-
+  // Formik must be initialized before using its values in hooks
   const formik = useFormik({
     initialValues: {
+      productId: "",
       rate: 0,
       startDate: new Date(),
       endDate: new Date(new Date().setMonth(new Date().getMonth() + 1)),
+      productName: "",
     },
     validationSchema,
     onSubmit: async (values) => {
       try {
-        const rateData = {
+        const rateData: any = {
+          productId: values.productId,
           rate: values.rate,
           startDate: values.startDate.toISOString().split("T")[0],
           endDate: values.endDate.toISOString().split("T")[0],
@@ -79,13 +83,13 @@ const ProductRateForm: React.FC = () => {
             severity: "success",
           });
         } else {
-          await createRate({ productId: productId!, data: rateData }).unwrap();
+          await createRate(rateData).unwrap();
           setSnackbar({
             open: true,
             message: "Rate created successfully!",
             severity: "success",
           });
-          navigate(`/products/${productId}/rates`);
+          navigate("/products-rates");
         }
       } catch (error) {
         setSnackbar({
@@ -97,14 +101,27 @@ const ProductRateForm: React.FC = () => {
     },
   });
 
+  // Fetch all products for the dropdown
+  const { data: products } = useGetProductsQuery({});
+  // Fetch product rates if editing
+  const { data: productRates } = useGetProductRatesQuery(
+    { productId: formik.values.productId },
+    { skip: !formik.values.productId || !id }
+  );
+
+  const [createRate] = useCreateProductRateMutation();
+  const [updateRate] = useUpdateProductRateMutation();
+
   useEffect(() => {
     if (id && productRates?.rates) {
       const rateToEdit = productRates.rates.find((rate) => rate.id === id);
       if (rateToEdit) {
         formik.setValues({
+          productId: rateToEdit.productId,
           rate: rateToEdit.rate,
           startDate: new Date(rateToEdit.startDate),
           endDate: new Date(rateToEdit.endDate),
+          productName: rateToEdit.product?.name || "",
         });
       }
     }
@@ -113,7 +130,7 @@ const ProductRateForm: React.FC = () => {
   return (
     <Box p={4}>
       <Box mb={4} display="flex" alignItems="center">
-        <IconButton onClick={() => navigate(`/products/${productId}/rates`)}>
+        <IconButton onClick={() => navigate("/products-rates")}>
           <ArrowBack />
         </IconButton>
         <Typography variant="h4" ml={2}>
@@ -125,13 +142,34 @@ const ProductRateForm: React.FC = () => {
         <CardContent>
           <form onSubmit={formik.handleSubmit}>
             <Grid container spacing={3}>
-              <Grid item xs={12}>
-                <Typography variant="h6" gutterBottom>
-                  Product: {productRates?.product.name}
-                </Typography>
-                <Typography variant="body2" color="text.secondary" gutterBottom>
-                  SKU: {productRates?.product.sku}
-                </Typography>
+              <Grid item xs={12} md={6}>
+                <FormControl fullWidth margin="normal">
+                  <InputLabel id="product-select-label">Product</InputLabel>
+                  <Select
+                    labelId="product-select-label"
+                    id="productId"
+                    name="productId"
+                    value={formik.values.productId}
+                    onChange={formik.handleChange}
+                    error={
+                      formik.touched.productId &&
+                      Boolean(formik.errors.productId)
+                    }
+                    label="Product"
+                    disabled={!!id} // Disable when editing
+                  >
+                    {products?.map((product: any) => (
+                      <MenuItem key={product.id} value={product.id}>
+                        {product.name} ({product.sku})
+                      </MenuItem>
+                    ))}
+                  </Select>
+                  {formik.touched.productId && formik.errors.productId && (
+                    <Typography color="error" variant="body2">
+                      {formik.errors.productId}
+                    </Typography>
+                  )}
+                </FormControl>
               </Grid>
 
               <Grid item xs={12} md={6}>
@@ -163,6 +201,13 @@ const ProductRateForm: React.FC = () => {
                     onChange={(date: Date | null) => {
                       if (date) {
                         formik.setFieldValue("startDate", date);
+                        // Auto-set end date if it's before start date
+                        if (formik.values.endDate < date) {
+                          formik.setFieldValue(
+                            "endDate",
+                            new Date(date.setMonth(date.getMonth() + 1))
+                          );
+                        }
                       }
                     }}
                     selectsStart
@@ -184,10 +229,9 @@ const ProductRateForm: React.FC = () => {
                     End Date
                   </Typography>
                   <DatePicker
+                    selected={formik.values.endDate}
                     onChange={(date: Date | null) => {
-                      if (date) {
-                        formik.setFieldValue("endDate", date);
-                      }
+                      if (date) formik.setFieldValue("endDate", date);
                     }}
                     selectsEnd
                     startDate={formik.values.startDate}

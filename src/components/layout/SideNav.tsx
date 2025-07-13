@@ -133,7 +133,7 @@ export function SideNav({ collapsed, setCollapsed }: SideNavProps) {
           <Box sx={{ display: "flex", alignItems: "center" }}>
             {/* {!collapsed && <img src={Logo} alt="logo" width={"65px"} />}
              */}
-            JENISH{" "}
+            task{" "}
           </Box>
           <IconButton onClick={handleToggleSidebar} sx={{ color: "white" }}>
             {collapsed ? <MenuIcon /> : <ChevronLeftIcon />}

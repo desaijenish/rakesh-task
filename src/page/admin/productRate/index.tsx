@@ -92,7 +92,7 @@ const ProductRateList: React.FC = () => {
         <Button
           variant="contained"
           startIcon={<AddIcon />}
-          onClick={() => navigate(`/products/${productId}/rates/add`)}
+          onClick={() => navigate(`/products-rates/add`)}
           sx={{
             backgroundColor: "#4f46e5",
             "&:hover": { backgroundColor: "#4338ca" },
